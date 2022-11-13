@@ -23,18 +23,29 @@ class UserStorage {
     //     nm: ["가가가","나나나","다다다"],
     // };    
 
-    // // => field의 값을 읽어 Return 한다. ( field에 해당하는 N건 Return )
-    // static getUsers(...fields) {        
-    //     const users = this.#users;
-    //     const newUsers = fields.reduce((newUsers, field) => {
-    //         if (users.hasOwnProperty(field)) {
-    //             newUsers[field] = users[field];
-    //         }
-    //         return newUsers;
-    //     }, {});
-    //     // console.log(newUsers);            
-    //     return newUsers;
-    // }
+    static #getUsers(data, isAll, fileds) {
+        const users = JSON.parse(data);
+        const newUsers = fields.reduce((newUsers, field) => {
+            if (isAll) return users;
+
+            if (users.hasOwnProperty(field)) {
+                newUsers[field] = users[field];
+            }
+            return newUsers;
+        }, {});
+        // console.log(newUsers);            
+        return newUsers;
+    }
+
+    // => field의 값을 읽어 Return 한다. ( field에 해당하는 N건 Return )
+    static getUsers(isAll, ...fields) {        
+        return fs
+            .readFile("./src/filedb/users.json")
+            .then((data) => {
+                return this.#getUsers(data, isAll, fields);
+            })
+            .catch(console.error);
+    }
 
     // => id에 해당하는 값을 읽어 Return 한다. ( idx 1건 )
     static getUserInfo(id) {
@@ -65,13 +76,17 @@ class UserStorage {
         // -----------------------------------------------------------------------------------------
     }
 
-    static save(userInfo) {
-        // const users = this.#users;
+    static async save(userInfo) {
+        // const users = await this.getUsers("id","pw","name");
+        const users = await this.getUsers(true);        
+        console.log(users);
+        if (users.id.includes(userInfo.id)) {
+            return new Error("이미 존재하는 아이디 입니다");
+        } 
         users.id.push(userInfo.id);
         users.nm.push(userInfo.nm);
         users.pw.push(userInfo.pw);
-
-        console.log(users);
+        fs.writeFile("./src/filedb/users.json", JSON.stringify(users));
 
         return {success: true};
     }
