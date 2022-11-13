@@ -9,10 +9,10 @@ const output = {
         res.render("home/index");
     },    
     login: (req, res) => {
-        res.render("home/login")
+        res.render("home/login");
     },
     register: (req, res) => {
-        res.render("home/register")
+        res.render("home/register");
     },
 }
 
@@ -54,9 +54,9 @@ const process = {
         return res.json(response);
         ------------------------------------------------------------ */
     },
-    register: (req, res) => {
+    register: async (req, res) => {
         const user = new User(req.body);
-        const response = user.register();
+        const response = await user.register();
         console.log(response);
         return res.json(response);
     },

@@ -23,11 +23,11 @@ class UserStorage {
     //     nm: ["가가가","나나나","다다다"],
     // };    
 
-    static #getUsers(data, isAll, fileds) {
+    static #getUsers(data, isAll, fields) {
         const users = JSON.parse(data);
-        const newUsers = fields.reduce((newUsers, field) => {
-            if (isAll) return users;
+        if (isAll) return users;      
 
+        const newUsers = fields.reduce((newUsers, field) => {
             if (users.hasOwnProperty(field)) {
                 newUsers[field] = users[field];
             }
@@ -78,11 +78,12 @@ class UserStorage {
 
     static async save(userInfo) {
         // const users = await this.getUsers("id","pw","name");
-        const users = await this.getUsers(true);        
-        console.log(users);
+        const users = await this.getUsers(true);  // --> 모든 컬럼을 읽도록 수정       
+        // console.log(users);
         if (users.id.includes(userInfo.id)) {
-            return new Error("이미 존재하는 아이디 입니다");
+            throw "이미 존재하는 아이디 입니다";
         } 
+        // Data 추가
         users.id.push(userInfo.id);
         users.nm.push(userInfo.nm);
         users.pw.push(userInfo.pw);

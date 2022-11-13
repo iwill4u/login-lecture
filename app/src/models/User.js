@@ -22,8 +22,14 @@ class User {
 
     async register() {
         const client = this.body;
-        const response = await UserStorage.save(client);
-        return response;
+        try{
+            const response = await UserStorage.save(client);
+            return response;
+        } catch (err) {
+            const rtnmsg = { success: false, msg: err };
+            console.log(rtnmsg);
+            return rtnmsg;
+        }
     }
 }
 
