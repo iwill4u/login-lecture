@@ -1,8 +1,20 @@
 "use strict";
 
-const fs = require("fs");
+const fs = require("fs").promises;
 
 class UserStorage {
+
+    static #getUserInfo(date, id) {
+        const users = JSON.parse(data); 
+        const idx = users.id.indexOf(id);       // => 인자로 넘어온 id를 찾았을 때의 index
+        const userKeys = Object.keys(users);    // => key = {id, pw, nm}
+        const userInfo = userKeys.reduce((newUser, info) => {
+            newUser[info] = users[info][idx];   // => KeyValue{(id,pw,nm)각각의 idx위치의 값}
+            return newUser;
+        }, {});
+
+        return userInfo;    // => recurd 1건의 값을 return    
+    }
 
     // filedb의 users.json 으로 저장
     // static #users = {     // # : public --> private 로 선언
@@ -27,20 +39,30 @@ class UserStorage {
     // => id에 해당하는 값을 읽어 Return 한다. ( idx 1건 )
     static getUserInfo(id) {
         // const users = this.#users;
-        fs.readFile("./src/filedb/users.json", (err, data) => {
-            if (err) throw err;
-            // console.log(JSON.parse(data));
-            const users = JSON.parse(data);
+        fs.readFile("./src/filedb/users.json")
+            .then((data) => {
+                return this.#getUserInfo(data, id);
+            })
+            .catch((err) => console.error(err));
+        
+        // -----------------------------------------------------------------------------------------
+        // --> 변수 메모리를 사용하는 경우
+        // -----------------------------------------------------------------------------------------
+        // , (err, data) => {
+        //     if (err) throw err;
+        //     // console.log(JSON.parse(data));
+        //     const users = JSON.parse(data);
 
-            const idx = users.id.indexOf(id);       // => 인자로 넘어온 id를 찾았을 때의 index
-            const userKeys = Object.keys(users);    // => key = {id, pw, nm}
-            const userInfo = userKeys.reduce((newUser, info) => {
-                newUser[info] = users[info][idx];   // => KeyValue{(id,pw,nm)각각의 idx위치의 값}
-                return newUser;
-            }, {});
+        //     const idx = users.id.indexOf(id);       // => 인자로 넘어온 id를 찾았을 때의 index
+        //     const userKeys = Object.keys(users);    // => key = {id, pw, nm}
+        //     const userInfo = userKeys.reduce((newUser, info) => {
+        //         newUser[info] = users[info][idx];   // => KeyValue{(id,pw,nm)각각의 idx위치의 값}
+        //         return newUser;
+        //     }, {});
     
-            return userInfo;    // => recurd 1건의 값을 return    
-        });
+        //     return userInfo;    // => recurd 1건의 값을 return    
+        // });
+        // -----------------------------------------------------------------------------------------
     }
 
     static save(userInfo) {
