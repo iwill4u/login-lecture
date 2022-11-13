@@ -2,6 +2,7 @@
 
 // const UserStorage = require("../../models/UserStorage");
 const User = require("../../models/User");
+const UserStorage = require("../../models/UserStorage");
 
 const output = {
     home: (req, res) => {
@@ -10,9 +11,10 @@ const output = {
     login: (req, res) => {
         res.render("home/login")
     },
+    register: (req, res) => {
+        res.render("home/register")
+    },
 }
-
-
 
 const process = {
     login: (req, res) => {
@@ -20,7 +22,6 @@ const process = {
         const response = user.login();
         console.log(response);
         return res.json(response);
-
         /* ------------------------------------------------------------
         const id = req.body.id,
           pw = req.body.pw;
@@ -52,6 +53,12 @@ const process = {
 
         return res.json(response);
         ------------------------------------------------------------ */
+    },
+    register: (req, res) => {
+        const user = new User(req.body);
+        const response = user.register();
+        console.log(response);
+        return res.json(response);
     },
 };
 
